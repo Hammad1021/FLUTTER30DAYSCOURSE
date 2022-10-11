@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MyTheme {
   static ThemeData LightTheme(BuildContext context) => ThemeData(
         appBarTheme: AppBarTheme(
-            color: Colors.white,
+            color: Colors.blue,
             elevation: 0.0,
             iconTheme: IconThemeData(color: Colors.black)),
         textTheme: Theme.of(context).textTheme,
