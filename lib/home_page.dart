@@ -1,17 +1,17 @@
 import 'dart:convert';
+import 'dart:convert';
 
-import 'package:day_4/model/catalog.dart';
-import 'package:day_4/model/catalog.dart';
-
-import 'package:day_4/widget/Drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:day_4/widget/Drawer.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
+
+import 'package:day_4/model/catalog.dart';
+import 'package:day_4/model/catalog.dart';
+import 'package:day_4/widget/Drawer.dart';
+import 'package:day_4/widget/Drawer.dart';
 
 import 'model/catalog.dart';
 import 'widget/item_widget.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
 
 class homepage extends StatefulWidget {
   const homepage({super.key});
@@ -44,57 +44,132 @@ class _homepageState extends State<homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'CATALOG APP',
-            style: TextStyle(color: Colors.black),
-          ),
+        body: SafeArea(
+      child: Container(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          children: [
+            CatalogHeader(),
+            if (CatalogModel.items != null && CatalogModel.items.isNotEmpty)
+              Expanded(child: CaltalogList())
+            else
+              Center(child: CircularProgressIndicator())
+          ],
         ),
-        body: Padding(
-          padding: EdgeInsets.all(16),
-          child: (CatalogModel.items != Null && CatalogModel.items.isNotEmpty)
-              ? GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    mainAxisSpacing: 50,
-                    crossAxisSpacing: 15,
-                  ),
-                  itemBuilder: (context, index) {
-                    final Item = CatalogModel.items[index];
-                    return Card(
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: GridTile(
-                            header: Container(
-                              child: Text(
-                                Item.name,
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            child: Image.network(Item.image),
-                            footer: Container(
-                              child: Text(
-                                Item.price.toString(),
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              padding: EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                              ),
-                            )));
-                  },
-                  itemCount: CatalogModel.items.length)
-              : Center(
-                  child: CircularProgressIndicator(
-                    backgroundColor: Colors.blue,
+      ),
+    ));
+  }
+}
+
+class CatalogHeader extends StatelessWidget {
+  const CatalogHeader({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Center(
+        child: Text(
+          'CATALOG APP',
+          style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold),
+        ),
+      ),
+      Center(
+        child: Text('Trending Products',
+            style: TextStyle(
+              fontSize: 15,
+            )),
+      ),
+      SizedBox(
+        height: 15,
+      )
+    ]);
+
+    CaltalogList();
+  }
+}
+
+class CaltalogList extends StatelessWidget {
+  const CaltalogList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: CatalogModel.items.length,
+      itemBuilder: (context, index) {
+        final catalog = CatalogModel.items[index];
+        return CatalogItem(Catalog: catalog);
+      },
+    );
+  }
+}
+
+class CatalogItem extends StatelessWidget {
+  const CatalogItem({
+    Key? key,
+    required this.Catalog,
+  })  : assert(Catalog != null),
+        super(key: key);
+  final Item Catalog;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 8),
+      alignment: Alignment.topLeft,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Row(
+        children: [
+          Image.network(
+            Catalog.image,
+            width: 118,
+            height: 70,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  Catalog.name,
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.black),
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text(
+                  Catalog.desc,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 8,
+                    color: Colors.black,
                   ),
                 ),
-        ),
-        drawer: const MyDrawer());
+                ButtonBar(
+                    alignment: MainAxisAlignment.spaceBetween,
+                    buttonPadding: EdgeInsets.only(left: 10),
+                    children: [
+                      Text(
+                        "\$${Catalog.price}".toString(),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      ElevatedButton(
+                          onPressed: () {},
+                          child: Text(
+                            "Buy",
+                          ))
+                    ])
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 }
